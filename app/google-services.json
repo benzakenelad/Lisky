@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "262722955729",
+    "firebase_url": "https://lisky-da82a.firebaseio.com",
+    "project_id": "lisky-da82a",
+    "storage_bucket": "lisky-da82a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:262722955729:android:5fcad2a9f69a9372",
+        "android_client_info": {
+          "package_name": "com.example.elad.liskyproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "262722955729-1frm4bv1b0amb8jih9obvditna6dofsh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.elad.liskyproject",
+            "certificate_hash": "9d495325af860f25cee43002d52d2846f9643cd1"
+          }
+        },
+        {
+          "client_id": "262722955729-burtjh2ep7oreup51so0fgorijjrvl44.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAJ7UzlM_ml4W1xUc289d-zBoDDwpi8jj8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "262722955729-burtjh2ep7oreup51so0fgorijjrvl44.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
