@@ -1,24 +1,13 @@
 package com.example.elad.liskyproject;
 
-import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-
-public class MainActivity extends AppCompatActivity implements MenuListFragment.OnMenuListItemClickListener{
+public class MainActivity extends AppCompatActivity implements MenuListFragment.OnMenuListItemClickListener, AddSharedListFragment.OnAddOrCancelButtonClickListener, SharedListFragment.OnItemClickListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,12 +23,42 @@ public class MainActivity extends AppCompatActivity implements MenuListFragment.
     }
 
     @Override
-    public void onClick(View view) {
-        // TODO open shared list fragment
+    public void onItemClick(View view) {
+        TextView text = view.findViewById(R.id.menu_list_item_id);
+        String sharedListID = text.getText().toString();
         getSupportFragmentManager().beginTransaction().remove(getSupportFragmentManager().findFragmentById(R.id.frame_id)).commit();
+        SharedListFragment sharedListFragment = SharedListFragment.newInstance(sharedListID);
+        getSupportFragmentManager().beginTransaction().replace(R.id.frame_id, sharedListFragment).commit();
+    }
 
+    @Override
+    public void onAddButtonClick(View view) {
+        getSupportFragmentManager().beginTransaction().remove(getSupportFragmentManager().findFragmentById(R.id.frame_id)).commit();
+        AddSharedListFragment addSharedListFragment = AddSharedListFragment.newInstance();
+        getSupportFragmentManager().beginTransaction().replace(R.id.frame_id, addSharedListFragment).commit();
+    }
 
+    // AddSharedListFragment
+    @Override
+    public void OnButtonClickAction() {
+        getSupportFragmentManager().beginTransaction().remove(getSupportFragmentManager().findFragmentById(R.id.frame_id)).commit();
         MenuListFragment menuListFragment = MenuListFragment.newInstance();
         getSupportFragmentManager().beginTransaction().replace(R.id.frame_id, menuListFragment).commit();
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        OnButtonClickAction();
+    }
+
+    @Override
+    public void onSharedListItemClick(View view) {
+        // TODO
+    }
+
+    @Override
+    public void onSharedListAddButtonClick() {
+        // TODO
     }
 }
