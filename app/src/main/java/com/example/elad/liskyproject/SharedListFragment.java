@@ -7,10 +7,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -31,6 +33,7 @@ public class SharedListFragment extends android.support.v4.app.Fragment {
 
 
     private String sharedListID;
+    private TextView sharedListName;
     private SharedListData sharedListData = new SharedListData();
     private SharedListAdapter adapter;
     private OnItemClickListener mListener;
@@ -54,17 +57,7 @@ public class SharedListFragment extends android.support.v4.app.Fragment {
         if (getArguments() != null) {
             sharedListID = getArguments().getString(ARG_PARAM1);
         }
-        sharedListViewModel = ViewModelProviders.of(this).get(SharedListViewModel.class);
-        sharedListViewModel.getSpecificSharedListDataByListID(sharedListID).observe(this, new Observer<SharedListData>() {
-            @Override
-            public void onChanged(@Nullable SharedListData sld) {
-                if(sld != null)
-                    sharedListData = sld;
-                if(adapter != null)
-                    adapter.notifyDataSetChanged();
-            }
-        }
-        );
+
     }
 
     @Override
@@ -78,9 +71,30 @@ public class SharedListFragment extends android.support.v4.app.Fragment {
         addItemButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO
+                mListener.onSharedListAddButtonClick(sharedListID);
             }
         });
+        Button addPartnerButton = view.findViewById(R.id.shared_list_add_partner_button);
+        addPartnerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.onSharedListAddPartnerButtonClick(sharedListID);
+            }
+        });
+        sharedListName = view.findViewById(R.id.shared_list_title);
+        sharedListViewModel = ViewModelProviders.of(this).get(SharedListViewModel.class);
+        sharedListViewModel.getSpecificSharedListDataByListID(sharedListID).observe(this, new Observer<SharedListData>() {
+                    @Override
+                    public void onChanged(@Nullable SharedListData sld) {
+                        if(sld != null)
+                            sharedListData = sld;
+                        if(adapter != null)
+                            adapter.notifyDataSetChanged();
+                        if(sharedListName != null)
+                            sharedListName.setText(sld.getSharedListName());
+                    }
+                }
+        );
         return view;
     }
 
@@ -106,7 +120,8 @@ public class SharedListFragment extends android.support.v4.app.Fragment {
     //TODO
     public interface OnItemClickListener {
         void onSharedListItemClick(View view);
-        void onSharedListAddButtonClick();
+        void onSharedListAddButtonClick(String sharedListID);
+        void onSharedListAddPartnerButtonClick(String sharedListID);
     }
 
     public class SharedListAdapter extends BaseAdapter {

@@ -7,7 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity implements MenuListFragment.OnMenuListItemClickListener, AddSharedListFragment.OnAddOrCancelButtonClickListener, SharedListFragment.OnItemClickListener{
+public class MainActivity extends AppCompatActivity implements MenuListFragment.OnMenuListItemClickListener, AddSharedListFragment.OnAddOrCancelButtonClickListener, SharedListFragment.OnItemClickListener, AddItemToSharedListFragment.OnCancelOrAddButtonClick, AddPartnerFragment.OnFragmentInteractionListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,7 +23,14 @@ public class MainActivity extends AppCompatActivity implements MenuListFragment.
     }
 
     @Override
-    public void onItemClick(View view) {
+    public void onBackPressed() {
+        //super.onBackPressed();
+        OnButtonClickAction();
+    }
+
+    // MenuListFragment
+    @Override
+    public void onMenuListItemClick(View view) {
         TextView text = view.findViewById(R.id.menu_list_item_id);
         String sharedListID = text.getText().toString();
         getSupportFragmentManager().beginTransaction().remove(getSupportFragmentManager().findFragmentById(R.id.frame_id)).commit();
@@ -31,8 +38,9 @@ public class MainActivity extends AppCompatActivity implements MenuListFragment.
         getSupportFragmentManager().beginTransaction().replace(R.id.frame_id, sharedListFragment).commit();
     }
 
+    // MenuListFragment
     @Override
-    public void onAddButtonClick(View view) {
+    public void onMenuListAddButtonClick(View view) {
         getSupportFragmentManager().beginTransaction().remove(getSupportFragmentManager().findFragmentById(R.id.frame_id)).commit();
         AddSharedListFragment addSharedListFragment = AddSharedListFragment.newInstance();
         getSupportFragmentManager().beginTransaction().replace(R.id.frame_id, addSharedListFragment).commit();
@@ -46,19 +54,41 @@ public class MainActivity extends AppCompatActivity implements MenuListFragment.
         getSupportFragmentManager().beginTransaction().replace(R.id.frame_id, menuListFragment).commit();
     }
 
-    @Override
-    public void onBackPressed() {
-        //super.onBackPressed();
-        OnButtonClickAction();
-    }
-
+    // SharedListFragment
     @Override
     public void onSharedListItemClick(View view) {
         // TODO
     }
 
+    // SharedListFragment
     @Override
-    public void onSharedListAddButtonClick() {
-        // TODO
+    public void onSharedListAddButtonClick(String sharedListID) {
+        getSupportFragmentManager().beginTransaction().remove(getSupportFragmentManager().findFragmentById(R.id.frame_id)).commit();
+        AddItemToSharedListFragment addItemToSharedListFragment = AddItemToSharedListFragment.newInstance(sharedListID);
+        getSupportFragmentManager().beginTransaction().replace(R.id.frame_id, addItemToSharedListFragment).commit();
+    }
+
+    // SharedListFragment
+    @Override
+    public void onSharedListAddPartnerButtonClick(String sharedListID) {
+        getSupportFragmentManager().beginTransaction().remove(getSupportFragmentManager().findFragmentById(R.id.frame_id)).commit();
+        AddPartnerFragment addPartnerFragment = AddPartnerFragment.newInstance(sharedListID);
+        getSupportFragmentManager().beginTransaction().replace(R.id.frame_id, addPartnerFragment).commit();
+    }
+
+    // AddItemToSharedListFragment
+    @Override
+    public void onSharedListItemAdditionCancelOrAddButtonClick(String sharedListID) {
+        getSupportFragmentManager().beginTransaction().remove(getSupportFragmentManager().findFragmentById(R.id.frame_id)).commit();
+        SharedListFragment sharedListFragment = SharedListFragment.newInstance(sharedListID);
+        getSupportFragmentManager().beginTransaction().replace(R.id.frame_id, sharedListFragment).commit();
+    }
+
+    // AddPartnerFragment
+    @Override
+    public void OnAddPartnerCancelOrAddButtonClickListener(String sharedListID) {
+        getSupportFragmentManager().beginTransaction().remove(getSupportFragmentManager().findFragmentById(R.id.frame_id)).commit();
+        SharedListFragment sharedListFragment = SharedListFragment.newInstance(sharedListID);
+        getSupportFragmentManager().beginTransaction().replace(R.id.frame_id, sharedListFragment).commit();
     }
 }

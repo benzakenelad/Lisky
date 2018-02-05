@@ -61,7 +61,7 @@ public class MenuListFragment extends android.support.v4.app.Fragment {
         addNewListButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onAddButtonClick(v);
+                mListener.onMenuListAddButtonClick(v);
             }
         });
         return view;
@@ -96,8 +96,8 @@ public class MenuListFragment extends android.support.v4.app.Fragment {
     }
 
     public interface OnMenuListItemClickListener {
-        void onItemClick(View view);
-        void onAddButtonClick(View view);
+        void onMenuListItemClick(View view);
+        void onMenuListAddButtonClick(View view);
     }
 
     public class MenuListAdapter extends BaseAdapter {
@@ -126,15 +126,13 @@ public class MenuListFragment extends android.support.v4.app.Fragment {
                 convertView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mListener.onItemClick(v);
+                        mListener.onMenuListItemClick(v);
                     }
                 });
             }
             SharedListDetails listInfo = data.get(position);
             TextView listName = convertView.findViewById(R.id.menu_list_item_name);
             listName.setText(listInfo.getListName());
-            TextView listMembersAmount = convertView.findViewById(R.id.menu_list_item_members_amount);
-            listMembersAmount.setText("Members: " + listInfo.getMembersAmount());
             TextView listID = convertView.findViewById(R.id.menu_list_item_id);
             listID.setText(listInfo.getListID());
             return convertView;

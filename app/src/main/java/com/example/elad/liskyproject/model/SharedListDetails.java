@@ -4,12 +4,10 @@ package com.example.elad.liskyproject.model;
 public class SharedListDetails {
     private String listName;
     private String listID;
-    private int membersAmount;
 
-    public SharedListDetails(String listName, String listID, int membersAmount) {
+    public SharedListDetails(String listName, String listID) {
         this.listName = listName;
         this.listID = listID;
-        this.membersAmount = membersAmount;
     }
 
     public SharedListDetails(){
@@ -32,11 +30,4 @@ public class SharedListDetails {
         this.listID = listID;
     }
 
-    public int getMembersAmount() {
-        return membersAmount;
-    }
-
-    public void setMembersAmount(int membersAmount) {
-        this.membersAmount = membersAmount;
-    }
 }

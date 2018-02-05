@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SharedListData {
+    private String sharedListName;
     private String sharedListID;
     private List<String> usersList;
     private List<SharedListItem> sharedListItems;
@@ -14,8 +15,8 @@ public class SharedListData {
         this.sharedListItems = sharedListItems;
     }
     public SharedListData(){
-        usersList = new ArrayList<String>();
-        sharedListItems = new ArrayList<SharedListItem>();
+        usersList = new ArrayList<>();
+        sharedListItems = new ArrayList<>();
     }
 
     public String getSharedListID() {
@@ -40,5 +41,13 @@ public class SharedListData {
 
     public void setSharedListItems(List<SharedListItem> sharedListItems) {
         this.sharedListItems = sharedListItems;
+    }
+
+    public String getSharedListName() {
+        return sharedListName;
+    }
+
+    public void setSharedListName(String sharedListName) {
+        this.sharedListName = sharedListName;
     }
 }

@@ -41,9 +41,13 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -273,6 +277,7 @@ public class LoginActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
                         showProgress(false);
+                        //openDataBaseTicket(mEmail);
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(intent);
                     } else {
@@ -298,6 +303,15 @@ public class LoginActivity extends AppCompatActivity {
         protected void onCancelled() {
             mRegisterTask = null;
         }
+
+//        public void openDataBaseTicket(String userEmail){
+//            userEmail = userEmail.replace(".", "_");
+//            FirebaseDatabase database = FirebaseDatabase.getInstance();
+//            DatabaseReference createUserRef = database.getReference("users").child(userEmail);
+//            Map<String, Object> hMap = new HashMap<>();
+//            hMap.put("userEmail", userEmail);
+//            createUserRef.updateChildren(hMap);
+//        }
     }
 }
 

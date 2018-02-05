@@ -7,8 +7,7 @@ public class SharedListItem {
     private String description;
     private String imageURL;
 
-    public SharedListItem(String itemID, String itemName, String imageURL, String description){
-        this.itemID = itemID;
+    public SharedListItem(String itemName, String imageURL, String description){
         this.itemName = itemName;
         this.imageURL = imageURL;
         this.description = description;
