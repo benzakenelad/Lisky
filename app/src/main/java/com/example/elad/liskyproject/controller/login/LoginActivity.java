@@ -139,7 +139,7 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    // email and password validation
+    // email and password validtion
     private boolean isEmailValid(String email) {
 
         return email.contains("@");
