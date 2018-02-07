@@ -3,10 +3,8 @@ package com.example.elad.liskyproject.controller.main.shared_list;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,8 +16,10 @@ import android.widget.TextView;
 import com.example.elad.liskyproject.R;
 import com.example.elad.liskyproject.model.entities.SharedListData;
 import com.example.elad.liskyproject.model.entities.SharedListItem;
-import com.example.elad.liskyproject.model.firebase.FirebaseModel;
 import com.example.elad.liskyproject.model.view_models.SharedListViewModel;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -79,21 +79,42 @@ public class EditSharedListItemFragment extends android.support.v4.app.Fragment 
                         List<SharedListItem> sharedListItems = sld.getSharedListItems();
                         for (SharedListItem item : sharedListItems) {
                             if (itemID.equals(item.getItemID())) {
-
-                                if (!item.getImageURL().equals("empty"))
-                                    sharedListViewModel.getImage(item.getImageURL(), new FirebaseModel.GetImageListener() {
+                                final String imageURL = item.getImageURL();
+                                if (!imageURL.equals("empty")) {
+                                    Picasso.with(getContext()).load(imageURL).networkPolicy(NetworkPolicy.OFFLINE).into(itemImage, new Callback() {
                                         @Override
-                                        public void onSuccess(Bitmap imageBMP) {
+                                        public void onSuccess() {
                                             spinner.setVisibility(View.GONE);
-                                            itemImage.setImageBitmap(imageBMP);
                                         }
 
                                         @Override
-                                        public void onFail() {
-                                            Log.d("TAG", "Failed to get image 'EditSharedListItemFragment'");
+                                        public void onError() {
+                                            Picasso.with(getContext()).load(imageURL).into(itemImage, new Callback() {
+                                                @Override
+                                                public void onSuccess() {
+                                                    spinner.setVisibility(View.GONE);
+                                                }
+
+                                                @Override
+                                                public void onError() {
+                                                    spinner.setVisibility(View.GONE);
+                                                }
+                                            });
                                         }
                                     });
-                                else
+//                                    sharedListViewModel.getImage(item.getImageURL(), new FirebaseModel.GetImageListener() {
+//                                        @Override
+//                                        public void onSuccess(Bitmap imageBMP) {
+//                                            spinner.setVisibility(View.GONE);
+//                                            itemImage.setImageBitmap(imageBMP);
+//                                        }
+//
+//                                        @Override
+//                                        public void onFail() {
+//                                            Log.d("TAG", "Failed to get image 'EditSharedListItemFragment'");
+//                                        }
+//                                    });
+                                }else
                                     spinner.setVisibility(View.GONE);
 
                                 break;

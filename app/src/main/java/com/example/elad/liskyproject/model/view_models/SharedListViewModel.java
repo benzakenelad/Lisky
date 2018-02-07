@@ -43,7 +43,7 @@ public class SharedListViewModel extends ViewModel {
         SharedListRepository.getInstance().saveImage(imageBmp, itemID, listener);
     }
 
-    public void getImage(String imageURI, final FirebaseModel.GetImageListener listener) {
-        SharedListRepository.getInstance().getImage(imageURI,listener);
-    }
+//    public void getImage(String imageURI, final FirebaseModel.GetImageListener listener) {
+//        SharedListRepository.getInstance().getImage(imageURI,listener);
+//    }
 }

@@ -1,7 +1,6 @@
 package com.example.elad.liskyproject.model.firebase;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -243,28 +242,28 @@ public class FirebaseModel {
         });
     }
 
-    public interface GetImageListener {
-        void onSuccess(Bitmap imageBMP);
-        void onFail();
-    }
-
-    public static void getImage(String imageURI, final GetImageListener listener) {
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-
-        StorageReference httpsReference = storage.getReferenceFromUrl(imageURI);
-
-        final long ONE_MEGABYTE = 1024 * 1024;
-        httpsReference.getBytes(3 * ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @Override
-            public void onSuccess(byte[] bytes) {
-                Bitmap image = BitmapFactory.decodeByteArray(bytes, 0,bytes.length);
-                listener.onSuccess(image);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                listener.onFail();
-            }
-        });
-    }
+//    public interface GetImageListener {
+//        void onSuccess(Bitmap imageBMP);
+//        void onFail();
+//    }
+//
+//    public static void getImage(String imageURI, final GetImageListener listener) {
+//        FirebaseStorage storage = FirebaseStorage.getInstance();
+//
+//        StorageReference httpsReference = storage.getReferenceFromUrl(imageURI);
+//
+//        final long ONE_MEGABYTE = 1024 * 1024;
+//        httpsReference.getBytes(3 * ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+//            @Override
+//            public void onSuccess(byte[] bytes) {
+//                Bitmap image = BitmapFactory.decodeByteArray(bytes, 0,bytes.length);
+//                listener.onSuccess(image);
+//            }
+//        }).addOnFailureListener(new OnFailureListener() {
+//            @Override
+//            public void onFailure(@NonNull Exception e) {
+//                listener.onFail();
+//            }
+//        });
+//    }
 }

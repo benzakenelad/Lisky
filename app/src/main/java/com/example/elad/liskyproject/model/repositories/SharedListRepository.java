@@ -60,7 +60,7 @@ public class SharedListRepository {
         FirebaseModel.saveImage(imageBmp, itemID, listener);
     }
 
-    public void getImage(String imageURI, final FirebaseModel.GetImageListener listener) {
-        FirebaseModel.getImage(imageURI,listener);
-    }
+//    public void getImage(String imageURI, final FirebaseModel.GetImageListener listener) {
+//        FirebaseModel.getImage(imageURI,listener);
+//    }
 }
