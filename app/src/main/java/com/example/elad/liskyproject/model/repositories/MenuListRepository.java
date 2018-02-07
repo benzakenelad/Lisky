@@ -1,17 +1,13 @@
-package com.example.elad.liskyproject;
+package com.example.elad.liskyproject.model.repositories;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.util.Log;
 
-import com.example.elad.liskyproject.model.FirebaseModel;
-import com.example.elad.liskyproject.model.SharedListDetails;
+import com.example.elad.liskyproject.model.entities.SharedListDetails;
+import com.example.elad.liskyproject.model.firebase.FirebaseModel;
 
 import java.util.List;
 
-/**
- * Created by elad on 2/4/2018.
- */
 
 public class MenuListRepository {
     private static final MenuListRepository instance = new MenuListRepository();
@@ -41,11 +37,12 @@ public class MenuListRepository {
         return sharedListsLiveData;
     }
 
-    public void deleteSharedListForUserEMAIL(SharedListDetails sharedList, String userEMAIL){
-
-    }
 
     public void addSharedListForUserEMAIL(String sharedListName, String userEMAIL){
         FirebaseModel.addSharedListForUserEMAIL(sharedListName, userEMAIL);
+    }
+
+    public void removeSharedListForUserEMAIL(String sharedListID, String userEMAIL){
+        FirebaseModel.removeSharedListForUserEMAIL(sharedListID,userEMAIL);
     }
 }

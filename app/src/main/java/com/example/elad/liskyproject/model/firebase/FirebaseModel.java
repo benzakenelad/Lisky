@@ -1,12 +1,17 @@
-package com.example.elad.liskyproject.model;
+package com.example.elad.liskyproject.model.firebase;
 
-import android.arch.lifecycle.ViewModelProvider;
-import android.arch.lifecycle.ViewModelProviders;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.example.elad.liskyproject.MenuListViewModel;
+import com.example.elad.liskyproject.model.entities.SharedListData;
+import com.example.elad.liskyproject.model.entities.SharedListDetails;
+import com.example.elad.liskyproject.model.entities.SharedListItem;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.ProviderQueryResult;
@@ -15,7 +20,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -23,6 +32,8 @@ import java.util.List;
 import java.util.Map;
 
 public class FirebaseModel {
+
+
 
     public interface Callback<T> {
         void onComplete(T data);
@@ -45,7 +56,7 @@ public class FirebaseModel {
                     Object object = snap.getValue();
                     if (object instanceof HashMap) {
                         HashMap<Object, Object> hMap = (HashMap<Object, Object>) object;
-                        if(hMap != null) {
+                        if (hMap != null) {
                             String listID = (String) hMap.get("listID");
                             String listName = (String) hMap.get("listName");
                             list.add(new SharedListDetails(listName, listID));
@@ -90,10 +101,10 @@ public class FirebaseModel {
         createRef.setValue(sharedListData);
 
 
-        DatabaseReference updareRef = database.getReference("lists").child(sharedListDetails.getListID()).child("usersList");
+        DatabaseReference updateRef = database.getReference("lists").child(sharedListDetails.getListID()).child("usersList");
         Map<String, Object> map = new HashMap<>();
         map.put(creatorEMAIL, creatorEMAIL);
-        updareRef.updateChildren(map);
+        updateRef.updateChildren(map);
     }
 
     public static void getSharedListDataByIDAndObserve(final Callback<SharedListData> callback, String sharedListID) {
@@ -105,22 +116,26 @@ public class FirebaseModel {
                 //SharedListData sharedListData = dataSnapshot.getValue(SharedListData.class);
                 SharedListData sharedListData = new SharedListData();
                 Map<String, Object> value = (Map<String, Object>) dataSnapshot.getValue();
+                if (value == null)
+                    return;
+
                 sharedListData.setSharedListName((String) value.get("sharedListName"));
                 sharedListData.setSharedListID((String) value.get("sharedListID"));
-
 
                 //sharedListData.setUsersList((List<String>) value.get("usersList"));
                 List<String> usersList = new ArrayList<>();
                 HashMap<Object, Object> haMap = (HashMap<Object, Object>) value.get("usersList");
-                for (Object userMail : haMap.values()) {
-                    usersList.add((String) userMail);
-                }
+                if (haMap != null)
+                    for (Object userMail : haMap.values()) {
+                        usersList.add((String) userMail);
+                    }
                 sharedListData.setUsersList(usersList);
                 HashMap<Object, Object> hashMap = (HashMap<Object, Object>) value.get("sharedListItems");
                 if (hashMap != null)
                     for (Object obj : hashMap.values()) {
                         HashMap<String, String> hMap = (HashMap<String, String>) obj;
-                        sharedListData.getSharedListItems().add(convertHashMapToSharedListItem(hMap));
+                        if (hMap != null)
+                            sharedListData.getSharedListItems().add(convertHashMapToSharedListItem(hMap));
                     }
 
                 //sharedListData.setSharedListItems((List<SharedListItem>)value.get("sharedListItems"));
@@ -179,5 +194,77 @@ public class FirebaseModel {
             }
         });
 
+    }
+
+
+    public static void removeSharedListForUserEMAIL(String sharedListID, String userEMAIL) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        database.getReference("lists").child(sharedListID).child("usersList").child(userEMAIL).removeValue();
+        database.getReference("users").child(userEMAIL).child(sharedListID).removeValue();
+    }
+
+    public static void removeSharedListItemBySharedListID(String sharedListID, String itemID) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        database.getReference("lists").child(sharedListID).child("sharedListItems").child(itemID).removeValue();
+    }
+
+    public static void editSharedListItem(String sharedListID, String itemID, SharedListItem sharedListItem) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        database.getReference("lists").child(sharedListID).child("sharedListItems").child(itemID).child("itemName").setValue(sharedListItem.getItemName());
+        database.getReference("lists").child(sharedListID).child("sharedListItems").child(itemID).child("description").setValue(sharedListItem.getDescription());
+    }
+
+    public interface SaveImageListener {
+        void onComplete(String imageURL);
+        void onFail();
+    }
+
+    public static void saveImage(Bitmap imageBmp, String itemID, final SaveImageListener listener){
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageReference = storage.getReference().child("images").child(itemID);
+
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        imageBmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+        UploadTask uploadTask = storageReference.putBytes(data);
+        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Uri uri = taskSnapshot.getDownloadUrl();
+                listener.onComplete(uri.toString());
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                listener.onFail();
+            }
+        });
+    }
+
+    public interface GetImageListener {
+        void onSuccess(Bitmap imageBMP);
+        void onFail();
+    }
+
+    public static void getImage(String imageURI, final GetImageListener listener) {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+
+        StorageReference httpsReference = storage.getReferenceFromUrl(imageURI);
+
+        final long ONE_MEGABYTE = 1024 * 1024;
+        httpsReference.getBytes(3 * ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                Bitmap image = BitmapFactory.decodeByteArray(bytes, 0,bytes.length);
+                listener.onSuccess(image);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                listener.onFail();
+            }
+        });
     }
 }

@@ -3,10 +3,6 @@ package com.example.elad.liskyproject;
 import android.app.Application;
 import android.content.Context;
 
-/**
- * Created by elad on 2/3/2018.
- */
-
 public class MyApplication extends Application {
     private static Context context;
 

@@ -1,4 +1,4 @@
-package com.example.elad.liskyproject.model;
+package com.example.elad.liskyproject.model.entities;
 
 
 public class SharedListDetails {

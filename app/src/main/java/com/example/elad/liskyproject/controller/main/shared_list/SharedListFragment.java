@@ -1,43 +1,35 @@
-package com.example.elad.liskyproject;
+package com.example.elad.liskyproject.controller.main.shared_list;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.net.Uri;
+import android.graphics.Paint;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.example.elad.liskyproject.model.SharedListData;
-import com.example.elad.liskyproject.model.SharedListDetails;
-import com.example.elad.liskyproject.model.SharedListItem;
-
-import org.w3c.dom.Text;
-
-import java.util.List;
+import com.example.elad.liskyproject.R;
+import com.example.elad.liskyproject.model.entities.SharedListData;
+import com.example.elad.liskyproject.model.entities.SharedListItem;
+import com.example.elad.liskyproject.model.view_models.SharedListViewModel;
 
 
 public class SharedListFragment extends android.support.v4.app.Fragment {
     private static final String ARG_PARAM1 = "param1";
-
-
 
     private String sharedListID;
     private TextView sharedListName;
     private SharedListData sharedListData = new SharedListData();
     private SharedListAdapter adapter;
     private OnItemClickListener mListener;
-    private SharedListViewModel sharedListViewModel;
+    private ProgressBar spinner;
 
     public SharedListFragment() {
 
@@ -64,10 +56,12 @@ public class SharedListFragment extends android.support.v4.app.Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_shared_list, container, false);
+        spinner = view.findViewById(R.id.shared_list_spinner);
+        spinner.setVisibility(View.VISIBLE);
         ListView list = view.findViewById(R.id.shared_list_list);
         adapter = new SharedListAdapter();
         list.setAdapter(adapter);
-        ImageButton addItemButton = view.findViewById(R.id.shared_list_add_item_button);
+        Button addItemButton = view.findViewById(R.id.shared_list_add_item_button);
         addItemButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,11 +75,15 @@ public class SharedListFragment extends android.support.v4.app.Fragment {
                 mListener.onSharedListAddPartnerButtonClick(sharedListID);
             }
         });
+
         sharedListName = view.findViewById(R.id.shared_list_title);
-        sharedListViewModel = ViewModelProviders.of(this).get(SharedListViewModel.class);
+        sharedListName.setPaintFlags(sharedListName.getPaintFlags()| Paint.UNDERLINE_TEXT_FLAG);
+        SharedListViewModel sharedListViewModel = ViewModelProviders.of(this).get(SharedListViewModel.class);
         sharedListViewModel.getSpecificSharedListDataByListID(sharedListID).observe(this, new Observer<SharedListData>() {
                     @Override
                     public void onChanged(@Nullable SharedListData sld) {
+                        if(spinner.getVisibility() == View.VISIBLE)
+                            spinner.setVisibility(View.GONE);
                         if(sld != null)
                             sharedListData = sld;
                         if(adapter != null)
@@ -117,9 +115,8 @@ public class SharedListFragment extends android.support.v4.app.Fragment {
         mListener = null;
     }
 
-    //TODO
     public interface OnItemClickListener {
-        void onSharedListItemClick(View view);
+        void onSharedListItemClick(View view, String sharedListID);
         void onSharedListAddButtonClick(String sharedListID);
         void onSharedListAddPartnerButtonClick(String sharedListID);
     }
@@ -150,7 +147,7 @@ public class SharedListFragment extends android.support.v4.app.Fragment {
                 convertView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mListener.onSharedListItemClick(v);
+                        mListener.onSharedListItemClick(v, sharedListID);
                     }
                 });
             }
@@ -161,8 +158,6 @@ public class SharedListFragment extends android.support.v4.app.Fragment {
             itemDescription.setText(sharedListItem.getDescription());
             TextView itemID = convertView.findViewById(R.id.shared_list_item_id);
             itemID.setText(sharedListItem.getItemID());
-
-            // TODO small image in the right
 
             return convertView;
         }

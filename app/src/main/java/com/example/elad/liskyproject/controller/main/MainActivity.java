@@ -1,19 +1,25 @@
-package com.example.elad.liskyproject;
+package com.example.elad.liskyproject.controller.main;
 
+import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity implements MenuListFragment.OnMenuListItemClickListener, AddSharedListFragment.OnAddOrCancelButtonClickListener, SharedListFragment.OnItemClickListener, AddItemToSharedListFragment.OnCancelOrAddButtonClick, AddPartnerFragment.OnFragmentInteractionListener{
+import com.example.elad.liskyproject.R;
+import com.example.elad.liskyproject.controller.main.menu_list.AddSharedListFragment;
+import com.example.elad.liskyproject.controller.main.menu_list.MenuListFragment;
+import com.example.elad.liskyproject.controller.main.shared_list.AddItemToSharedListFragment;
+import com.example.elad.liskyproject.controller.main.shared_list.AddPartnerFragment;
+import com.example.elad.liskyproject.controller.main.shared_list.EditSharedListItemFragment;
+import com.example.elad.liskyproject.controller.main.shared_list.SharedListFragment;
+
+public class MainActivity extends AppCompatActivity implements MenuListFragment.OnMenuListItemClickListener, AddSharedListFragment.OnAddOrCancelButtonClickListener, SharedListFragment.OnItemClickListener, AddItemToSharedListFragment.OnCancelOrAddButtonClick, AddPartnerFragment.OnFragmentInteractionListener, EditSharedListItemFragment.OnFragmentInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         MenuListFragment menuListFragment = MenuListFragment.newInstance();
         FragmentTransaction tran = getSupportFragmentManager().beginTransaction();
@@ -24,7 +30,6 @@ public class MainActivity extends AppCompatActivity implements MenuListFragment.
 
     @Override
     public void onBackPressed() {
-        //super.onBackPressed();
         OnButtonClickAction();
     }
 
@@ -56,8 +61,13 @@ public class MainActivity extends AppCompatActivity implements MenuListFragment.
 
     // SharedListFragment
     @Override
-    public void onSharedListItemClick(View view) {
+    public void onSharedListItemClick(View view, String sharedListID) {
         // TODO
+        TextView itemIDTextView = view.findViewById(R.id.shared_list_item_id);
+        String itemID = itemIDTextView.getText().toString();
+        getSupportFragmentManager().beginTransaction().remove(getSupportFragmentManager().findFragmentById(R.id.frame_id)).commit();
+        EditSharedListItemFragment editSharedListItemFragment = EditSharedListItemFragment.newInstance(sharedListID,itemID);
+        getSupportFragmentManager().beginTransaction().replace(R.id.frame_id, editSharedListItemFragment).commit();
     }
 
     // SharedListFragment
@@ -87,6 +97,14 @@ public class MainActivity extends AppCompatActivity implements MenuListFragment.
     // AddPartnerFragment
     @Override
     public void OnAddPartnerCancelOrAddButtonClickListener(String sharedListID) {
+        getSupportFragmentManager().beginTransaction().remove(getSupportFragmentManager().findFragmentById(R.id.frame_id)).commit();
+        SharedListFragment sharedListFragment = SharedListFragment.newInstance(sharedListID);
+        getSupportFragmentManager().beginTransaction().replace(R.id.frame_id, sharedListFragment).commit();
+    }
+
+    // EditSharedListItemFragment
+    @Override
+    public void onEditSharedListItemAnyButtonClick(String sharedListID) {
         getSupportFragmentManager().beginTransaction().remove(getSupportFragmentManager().findFragmentById(R.id.frame_id)).commit();
         SharedListFragment sharedListFragment = SharedListFragment.newInstance(sharedListID);
         getSupportFragmentManager().beginTransaction().replace(R.id.frame_id, sharedListFragment).commit();

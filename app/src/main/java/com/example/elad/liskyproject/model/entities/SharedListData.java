@@ -1,4 +1,4 @@
-package com.example.elad.liskyproject.model;
+package com.example.elad.liskyproject.model.entities;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,11 +9,6 @@ public class SharedListData {
     private List<String> usersList;
     private List<SharedListItem> sharedListItems;
 
-    public SharedListData(String sharedListID, List<String> usersList, List<SharedListItem> sharedListItems) {
-        this.sharedListID = sharedListID;
-        this.usersList = usersList;
-        this.sharedListItems = sharedListItems;
-    }
     public SharedListData(){
         usersList = new ArrayList<>();
         sharedListItems = new ArrayList<>();
